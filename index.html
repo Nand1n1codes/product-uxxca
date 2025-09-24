@@ -5,20 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UXXCA Onboarding</title>
 
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400&display=swap" rel="stylesheet">
 
-<!-- Botpress Webchat CSS -->
 <style>
   #webchat .bpWebchat { position:fixed; top:0; left:0; width:100%; height:100%; max-width:100%; max-height:100%; z-index:9999; }
   #webchat .bpFab { display: none; }
 
   /* ====== Global Styles ====== */
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:#0A0A0A;color:#fff;font-family:'Inter',sans-serif;height:100vh;display:flex;justify-content:center;align-items:center;overflow:hidden;}
+  body{
+    background:#0A0A0A;
+    color:#fff;
+    font-family:'Inter',sans-serif;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+  }
 
   /* Landing Page Container */
-  #landing{width:100%;height:100%;position:absolute;top:0;left:0;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:opacity 1s;}
+  #landing{width:100%;height:100%;position:absolute;top:0;left:0;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:opacity 0.5s;}
 
   .logo{font-family:'Playfair Display', serif; font-size:5rem; color:#D4AF37; background:linear-gradient(90deg,#D4AF37 0%,#D4AF37 40%,#B5942B 60%,#D4AF37 100%); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation:shimmer 2.5s linear infinite;}
   .tagline{font-family:'Inter',sans-serif;font-size:1.2rem;color:#EEEEEE;margin-top:10px;text-align:center;}
@@ -57,6 +64,7 @@
     text-align:center;
     color:#EEF2FF;
     backdrop-filter: blur(6px);
+    transition: transform 0.3s, opacity 0.3s, filter 0.3s;
   }
   .pin-card h2 { color:#6f5f04; font-size:1.4rem; margin-bottom:8px; font-weight:700; }
   .pin-sub { color:#d6dff6; margin-bottom:14px; font-size:0.95rem; }
@@ -95,12 +103,37 @@
   .error { color:#ffb3b3; margin-top:8px; min-height:18px; }
   .remember { display:flex; gap:8px; align-items:center; color:#d6e5ff; font-size:0.9rem; }
   .remember input { width:16px; height:16px; }
+
+  /* ====== Bot Container ====== */
+  .bot-container {
+    position: absolute;
+    z-index: 50;
+    width: 100%;
+    height: 100%;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    backdrop-filter: blur(20px);
+    animation: subtle-glow 3s infinite alternate;
+  }
+  .bot-container #webchat {
+    position: relative;
+    opacity: 0;
+    transition: opacity 1s ease-in-out 0.8s; /* Delayed fade in */
+  }
+  @keyframes subtle-glow {
+    from {
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+    to {
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    }
+  }
 </style>
 </head>
 
 <body>
 
-<!-- Landing Page -->
 <div id="landing">
   <div class="logo">UXXCA</div>
   <div class="tagline">Your Chartered Accountant. Redefined.</div>
@@ -121,7 +154,6 @@
     By continuing, you confirm you’ve been invited to access UXXCA’s exclusive beta.
   </div>
 </div>
-<!-- PIN -->
 <div class="pin-wrap" id="pinWrap">
   <div class="pin-card" id="pinCard" role="dialog" aria-modal="true" aria-labelledby="pinTitle">
     <h2 id="pinTitle">🔐 Private Access</h2>
@@ -145,8 +177,10 @@
     </div>
   </div>
 </div>
-<!-- Botpress Webchat -->
-<div id="webchat" style="display:none;"></div>
+
+<div class="bot-container" id="botContainer">
+  <div id="webchat"></div>
+</div>
 
 <script>
 const progressBar = document.getElementById('progress-bar');
@@ -187,7 +221,7 @@ const interval = setInterval(() => {
         pinWrap.style.display = 'flex';
         setTimeout(() => pinWrap.style.opacity = 1, 50);
         document.getElementById('d1').focus();
-      }, 1000);
+      }, 500); // Reduced delay here
     }, 500);
   }
 }, 50);
@@ -272,38 +306,59 @@ function shakeCard() {
 function openBotForClient(clientName) {
   console.log("Welcome, " + clientName);
 
+  const pinCard = document.getElementById('pinCard');
+  const botContainer = document.getElementById('botContainer');
   const webchatDiv = document.getElementById('webchat');
-  webchatDiv.style.display = 'block';
 
-  const s = document.createElement('script');
-  s.src = "https://cdn.botpress.cloud/webchat/v3.2/inject.js";
-  s.async = true;
-  s.onload = () => {
-    window.botpress.init({
-      botId: "19228e29-7dd7-474b-ae6f-76cab1a95362",
-      clientId: "019ec6d2-bc0c-4182-9db5-4421a437e16d",
-      selector: "#webchat",
-      configuration: {
-        version: "v2",
-        composerPlaceholder: "Accounting, redefined. One click. Infinite clarity",
-        botName: "UXXCA",
-        botAvatar: "https://files.bpcontent.cloud/2025/09/11/05/20250911053044-4017ZJZ5.jpeg",
-        botDescription: "Welcome to UXXCA - The World’s First AI Accountant.",
-        color: "#3276EA",
-        variant: "solid",
-        fullScreen: true,
-        showFab: false,
-        feedbackEnabled: true,
-        allowFileUpload: true,
-        themeMode: "dark",
-        fontFamily: "AR One Sans",
-        radius: 1,
-        footer: "[⚡ by Botpress](https://botpress.com/?from=webchat)"
-      }
-    });
-    window.botpress.on("webchat:ready", () => window.botpress.open());
-  };
-  document.body.appendChild(s);
+  // Animate PIN card away
+  pinCard.style.opacity = '0';
+  pinCard.style.transform = 'translateY(-50px) scale(0.9)';
+  pinCard.style.filter = 'blur(10px)';
+
+  setTimeout(() => {
+    pinWrap.style.display = 'none';
+
+    // Show bot container and fade it in
+    botContainer.style.display = 'block';
+    setTimeout(() => {
+      botContainer.style.opacity = '1';
+
+      // Load the Botpress script
+      const s = document.createElement('script');
+      s.src = "https://cdn.botpress.cloud/webchat/v3.2/inject.js";
+      s.async = true;
+      s.onload = () => {
+        // Initialize Botpress and fade in the chat
+        window.botpress.init({
+          botId: "19228e29-7dd7-474b-ae6f-76cab1a95362",
+          clientId: "019ec6d2-bc0c-4182-9db5-4421a437e16d",
+          selector: "#webchat",
+          configuration: {
+            version: "v2",
+            composerPlaceholder: "Accounting, redefined. One click. Infinite clarity",
+            botName: "UXXCA",
+            botAvatar: "https://files.bpcontent.cloud/2025/09/11/05/20250911053044-4017ZJZ5.jpeg",
+            botDescription: "Welcome to UXXCA - The World’s First AI Accountant.",
+            color: "#3276EA",
+            variant: "solid",
+            fullScreen: true,
+            showFab: false,
+            feedbackEnabled: true,
+            allowFileUpload: true,
+            themeMode: "dark",
+            fontFamily: "AR One Sans",
+            radius: 1,
+            footer: "[⚡ by Botpress](https://botpress.com/?from=webchat)"
+          }
+        });
+        window.botpress.on("webchat:ready", () => {
+          webchatDiv.style.opacity = '1';
+          window.botpress.open();
+        });
+      };
+      document.body.appendChild(s);
+    }, 10); // Reduced delay here
+  }, 300); // Reduced delay here
 }
 </script>
 </body>
