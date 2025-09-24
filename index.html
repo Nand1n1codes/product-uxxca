@@ -1,15 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UXXCA Onboarding</title>
-
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://cdn.botpress.cloud; connect-src 'self' https://cdn.botpress.cloud https://api.botpress.cloud; style-src 'self' 'unsafe-inline';">
-
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400&display=swap" rel="stylesheet">
-    
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UXXCA Onboarding</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400&display=swap" rel="stylesheet">
@@ -32,7 +25,7 @@
   }
 
   /* Landing Page Container */
-  #landing{width:100%;height:100%;position:absolute;top:0;left:0;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:opacity 0.5s;}
+  #landing{width:100%;height:100%;position:absolute;top:0;left:0;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:opacity 1s;}
 
   .logo{font-family:'Playfair Display', serif; font-size:5rem; color:#D4AF37; background:linear-gradient(90deg,#D4AF37 0%,#D4AF37 40%,#B5942B 60%,#D4AF37 100%); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation:shimmer 2.5s linear infinite;}
   .tagline{font-family:'Inter',sans-serif;font-size:1.2rem;color:#EEEEEE;margin-top:10px;text-align:center;}
@@ -228,7 +221,7 @@ const interval = setInterval(() => {
         pinWrap.style.display = 'flex';
         setTimeout(() => pinWrap.style.opacity = 1, 50);
         document.getElementById('d1').focus();
-      }, 500); // Reduced delay here
+      }, 1000);
     }, 500);
   }
 }, 50);
@@ -332,7 +325,7 @@ function openBotForClient(clientName) {
 
       // Load the Botpress script
       const s = document.createElement('script');
-      s.src = "https://cdn.botpress.cloud/webchat/v3.2/inject.js";
+      s.src="https://cdn.botpress.cloud/webchat/v3.2/inject.js";
       s.async = true;
       s.onload = () => {
         // Initialize Botpress and fade in the chat
@@ -364,8 +357,8 @@ function openBotForClient(clientName) {
         });
       };
       document.body.appendChild(s);
-    }, 10); // Reduced delay here
-  }, 300); // Reduced delay here
+    }, 100);
+  }, 800);
 }
 </script>
 </body>
