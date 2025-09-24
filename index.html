@@ -8,10 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400&display=swap" rel="stylesheet">
 
 <style>
-  #webchat .bpWebchat { position:fixed; top:0; left:0; width:100%; height:100%; max-width:100%; max-height:100%; z-index:9999; }
-  #webchat .bpFab { display: none; }
-
-  /* ====== Global Styles ====== */
   *{margin:0;padding:0;box-sizing:border-box;}
   body{
     background:#0A0A0A;
@@ -23,115 +19,33 @@
     align-items:center;
     overflow:hidden;
   }
-
-  /* Landing Page Container */
   #landing{width:100%;height:100%;position:absolute;top:0;left:0;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:opacity 1s;}
-
   .logo{font-family:'Playfair Display', serif; font-size:5rem; color:#D4AF37; background:linear-gradient(90deg,#D4AF37 0%,#D4AF37 40%,#B5942B 60%,#D4AF37 100%); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation:shimmer 2.5s linear infinite;}
-  .tagline{font-family:'Inter',sans-serif;font-size:1.2rem;color:#EEEEEE;margin-top:10px;text-align:center;}
-  .headline{font-family:'Playfair Display',serif;font-size:2rem;line-height:1.5;text-align:center;margin-top:30px;}
+  .tagline{font-size:1.2rem;color:#EEEEEE;margin-top:10px;text-align:center;}
+  .headline{font-size:2rem;line-height:1.5;text-align:center;margin-top:30px;}
   .subline{font-size:1rem;color:#AAAAAA;text-align:center;margin-top:10px;max-width:500px;}
   .progress-container{width:80%;max-width:500px;margin-top:30px;text-align:center;}
   .progress-bar{height:4px;background-color:#D4AF37;width:0%;border-radius:2px;transition:width 0.1s linear;}
   .progress-text{font-size:0.9rem;color:#FFFFFF;min-height:24px;margin-top:10px;}
   .microtext{font-size:0.7rem;color:#FFFFFF;margin-top:20px;text-align:center;max-width:400px;}
-
   @keyframes shimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
-
-  /* ====== PIN Container ====== */
-  .pin-wrap {
-    position: absolute;
-    z-index:40;
-    width:100%;
-    height:100%;
-    top:0;
-    left:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
-    transition:opacity 0.6s, transform 0.4s;
-    opacity:0;
-  }
-  .pin-card {
-    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-    border: 1px solid rgba(255,255,255,0.06);
-    width:420px;
-    max-width:92%;
-    padding:28px;
-    border-radius:14px;
-    box-shadow: 0 14px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
-    text-align:center;
-    color:#EEF2FF;
-    backdrop-filter: blur(6px);
-    transition: transform 0.3s, opacity 0.3s, filter 0.3s;
-  }
+  
+  .pin-wrap { position: absolute; z-index:40; width:100%; height:100%; top:0; left:0; display:flex; justify-content:center; align-items:center; padding:20px; transition:opacity 0.6s, transform 0.4s; opacity:0;}
+  .pin-card { background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.06); width:420px; max-width:92%; padding:28px; border-radius:14px; box-shadow: 0 14px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02); text-align:center; color:#EEF2FF; backdrop-filter: blur(6px); transition: transform 0.3s, opacity 0.3s, filter 0.3s;}
   .pin-card h2 { color:#6f5f04; font-size:1.4rem; margin-bottom:8px; font-weight:700; }
   .pin-sub { color:#d6dff6; margin-bottom:14px; font-size:0.95rem; }
   .pin-inputs { display:flex; justify-content:space-between; gap:10px; margin:14px 0 8px; }
-  .pin-inputs input {
-    width:64px;
-    height:64px;
-    font-size:1.6rem;
-    text-align:center;
-    border-radius:10px;
-    border:1px solid rgba(255,255,255,0.06);
-    background:transparent;
-    color:#fff;
-    outline:none;
-    transition:box-shadow .15s, border-color .15s;
-  }
+  .pin-inputs input { width:64px; height:64px; font-size:1.6rem; text-align:center; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:#fff; outline:none; transition:box-shadow .15s, border-color .15s; }
   .pin-inputs input:focus { box-shadow:0 6px 18px rgba(10,116,218,0.12); border-color:#dba605; }
   .pin-actions { display:flex; justify-content:space-between; align-items:center; margin-top:10px; gap:12px; }
-  .btn {
-    background:#dba605;
-    color:#fff;
-    border:none;
-    padding:10px 16px;
-    border-radius:10px;
-    font-weight:700;
-    cursor:pointer;
-    box-shadow: 0 8px 24px rgba(10,116,218,0.14);
-  }
-  .btn.ghost {
-    background:transparent;
-    border:1px solid rgba(255,255,255,0.06);
-    color:#dbe8ff;
-    box-shadow:none;
-  }
+  .btn { background:#dba605; color:#fff; border:none; padding:10px 16px; border-radius:10px; font-weight:700; cursor:pointer; box-shadow: 0 8px 24px rgba(10,116,218,0.14); }
+  .btn.ghost { background:transparent; border:1px solid rgba(255,255,255,0.06); color:#dbe8ff; box-shadow:none; }
   .small { font-size:0.86rem; color:#cfe0ff; }
   .error { color:#ffb3b3; margin-top:8px; min-height:18px; }
   .remember { display:flex; gap:8px; align-items:center; color:#d6e5ff; font-size:0.9rem; }
   .remember input { width:16px; height:16px; }
-
-  /* ====== Bot Container ====== */
-  .bot-container {
-    position: absolute;
-    z-index: 50;
-    width: 100%;
-    height: 100%;
-    display: none;
-    opacity: 0;
-    transition: opacity 0.8s ease-in-out;
-    backdrop-filter: blur(20px);
-    animation: subtle-glow 3s infinite alternate;
-  }
-  .bot-container #webchat {
-    position: relative;
-    opacity: 0;
-    transition: opacity 1s ease-in-out 0.8s; /* Delayed fade in */
-  }
-  @keyframes subtle-glow {
-    from {
-      box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
-    }
-    to {
-      box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-    }
-  }
 </style>
 </head>
-
 <body>
 
 <div id="landing">
@@ -154,6 +68,7 @@
     By continuing, you confirm you’ve been invited to access UXXCA’s exclusive beta.
   </div>
 </div>
+
 <div class="pin-wrap" id="pinWrap">
   <div class="pin-card" id="pinCard" role="dialog" aria-modal="true" aria-labelledby="pinTitle">
     <h2 id="pinTitle">🔐 Private Access</h2>
@@ -178,188 +93,72 @@
   </div>
 </div>
 
-<div class="bot-container" id="botContainer">
-  <div id="webchat"></div>
-</div>
-
 <script>
 const progressBar = document.getElementById('progress-bar');
 const progressText = document.getElementById('progress-text');
 const landing = document.getElementById('landing');
 const pinWrap = document.getElementById('pinWrap');
 
-const steps = [
-  "Preparing your private dashboard...",
-  "Reserving your spot...",
-  "Analysing your business potential..."
-];
-
-let progress = 0;
-let stepIndex = 0;
-
-// Landing page progress
+const steps = ["Preparing your private dashboard...","Reserving your spot...","Analysing your business potential..."];
+let progress = 0; let stepIndex = 0;
 const interval = setInterval(() => {
-  progress += 1;
-  if (progress > 100) progress = 100;
-  progressBar.style.width = progress + "%";
-
+  progress += 1; if(progress>100) progress=100;
+  progressBar.style.width = progress+"%";
   const step = Math.floor(progress / (100 / steps.length));
-  if (stepIndex !== step && step < steps.length) {
-    progressText.textContent = steps[step];
-    stepIndex = step;
-  }
-
-  if (progress === 100) {
+  if(stepIndex!==step && step<steps.length){ progressText.textContent = steps[step]; stepIndex=step; }
+  if(progress===100){
     clearInterval(interval);
-    setTimeout(() => {
-      // Fade out landing page
-      landing.style.opacity = 0;
-      setTimeout(() => {
-        landing.style.display = 'none';
-
-        // Show PIN page
-        pinWrap.style.display = 'flex';
-        setTimeout(() => pinWrap.style.opacity = 1, 50);
+    setTimeout(()=>{
+      landing.style.opacity=0;
+      setTimeout(()=>{
+        landing.style.display='none';
+        pinWrap.style.display='flex';
+        setTimeout(()=>pinWrap.style.opacity=1,50);
         document.getElementById('d1').focus();
-      }, 1000);
-    }, 500);
+      },1000);
+    },500);
   }
-}, 50);
+},50);
 
-/*******************************
- * CLIENTS & PIN CONFIG
- *******************************/
-const validPins = {
-  "4729": { name: "AcmeCorp" },
-  "8345": { name: "Globex" },
-  "2231": { name: "BetaLabs" }
-};
-
-/*******************************
- * PIN INPUT FLOW
- *******************************/
+const validPins={"4729":{name:"AcmeCorp"},"8345":{name:"Globex"},"2231":{name:"BetaLabs"}};
 const digits = Array.from(document.querySelectorAll('.pin-digit'));
 const unlockBtn = document.getElementById('unlockBtn');
 const helpBtn = document.getElementById('helpBtn');
 const pinError = document.getElementById('pinError');
 const rememberChk = document.getElementById('rememberChk');
 
-digits.forEach((el, idx) => {
-  el.addEventListener('input', () => {
-    el.value = el.value.replace(/[^0-9]/g, '').slice(0, 1);
-    if (el.value && idx < digits.length - 1) digits[idx + 1].focus();
+digits.forEach((el,idx)=>{
+  el.addEventListener('input',()=>{
+    el.value=el.value.replace(/[^0-9]/g,'').slice(0,1);
+    if(el.value && idx<digits.length-1) digits[idx+1].focus();
   });
-  el.addEventListener('keydown', (e) => {
-    if (e.key === 'Backspace' && !el.value && idx > 0) digits[idx - 1].focus();
-    if (e.key === 'Enter') attemptUnlock();
+  el.addEventListener('keydown',(e)=>{
+    if(e.key==='Backspace'&&!el.value && idx>0) digits[idx-1].focus();
+    if(e.key==='Enter') attemptUnlock();
   });
 });
 
-unlockBtn.addEventListener('click', attemptUnlock);
-helpBtn.addEventListener('click', () => {
-  pinError.textContent = "Contact uxxca.business@gmail.com for access assistance.";
+unlockBtn.addEventListener('click',attemptUnlock);
+helpBtn.addEventListener('click',()=>{ pinError.textContent="Contact uxxca.business@gmail.com for access assistance."; });
+
+function getEnteredPin(){ return digits.map(d=>d.value||'').join(''); }
+
+function attemptUnlock(){
+  const p=getEnteredPin();
+  if(p.length!==4){ pinError.textContent="Enter all 4 digits"; return; }
+  if(validPins[p]){
+    if(rememberChk.checked) localStorage.setItem('uxxcaPin',p);
+    window.location.href="https://cdn.botpress.cloud/webchat/v3.2/shareable.html?configUrl=https://files.bpcontent.cloud/2025/09/03/17/20250903170210-WM3PUBT1.json";
+  }else{ pinError.textContent="Invalid PIN"; }
+}
+
+window.addEventListener('load',()=>{
+  const savedPin = localStorage.getItem('uxxcaPin');
+  if(savedPin && validPins[savedPin]){
+    window.location.href="https://cdn.botpress.cloud/webchat/v3.2/shareable.html?configUrl=https://files.bpcontent.cloud/2025/09/03/17/20250903170210-WM3PUBT1.json";
+  }
 });
-
-function getEnteredPin() {
-  return digits.map(d => d.value || '').join('');
-}
-
-function attemptUnlock() {
-  const p = getEnteredPin();
-  if (p.length !== 4) {
-    pinError.textContent = "Enter the 4-digit PIN.";
-    return;
-  }
-  validatePin(p);
-}
-
-function validatePin(pinValue) {
-  pinError.textContent = '';
-  const client = validPins[pinValue];
-  if (client) {
-    if (rememberChk.checked) {
-      try { localStorage.setItem('uxxca_pin', pinValue); } catch (e) {}
-    }
-    openBotForClient(client.name);
-  } else {
-    pinError.textContent = "❌ Invalid PIN. Please try again or contact support.";
-    shakeCard();
-    clearPinInputs();
-    document.getElementById('d1').focus();
-  }
-}
-
-function clearPinInputs() {
-  digits.forEach(d => d.value = '');
-}
-
-function shakeCard() {
-  const card = document.getElementById('pinCard');
-  card.style.transform = 'translateX(-6px)';
-  setTimeout(() => card.style.transform = 'translateX(6px)', 80);
-  setTimeout(() => card.style.transform = 'translateX(0)', 160);
-}
-
-/*******************************
- * OPEN BOTPRESS
- *******************************/
-function openBotForClient(clientName) {
-  console.log("Welcome, " + clientName);
-
-  const pinCard = document.getElementById('pinCard');
-  const botContainer = document.getElementById('botContainer');
-  const webchatDiv = document.getElementById('webchat');
-
-  // Animate PIN card away
-  pinCard.style.opacity = '0';
-  pinCard.style.transform = 'translateY(-50px) scale(0.9)';
-  pinCard.style.filter = 'blur(10px)';
-
-  setTimeout(() => {
-    pinWrap.style.display = 'none';
-
-    // Show bot container and fade it in
-    botContainer.style.display = 'block';
-    setTimeout(() => {
-      botContainer.style.opacity = '1';
-
-      // Load the Botpress script
-      const s = document.createElement('script');
-      s.src="https://cdn.botpress.cloud/webchat/v3.2/inject.js"
-      s.async = true;
-      s.onload = () => {
-        // Initialize Botpress and fade in the chat
-        window.botpress.init({
-          botId: "19228e29-7dd7-474b-ae6f-76cab1a95362",
-          clientId: "019ec6d2-bc0c-4182-9db5-4421a437e16d",
-          selector: "#webchat",
-          configuration: {
-            version: "v2",
-            composerPlaceholder: "Accounting, redefined. One click. Infinite clarity",
-            botName: "UXXCA",
-            botAvatar: "https://files.bpcontent.cloud/2025/09/11/05/20250911053044-4017ZJZ5.jpeg",
-            botDescription: "Welcome to UXXCA - The World’s First AI Accountant.",
-            color: "#3276EA",
-            variant: "solid",
-            fullScreen: true,
-            showFab: false,
-            feedbackEnabled: true,
-            allowFileUpload: true,
-            themeMode: "dark",
-            fontFamily: "AR One Sans",
-            radius: 1,
-            footer: "[⚡ by Botpress](https://botpress.com/?from=webchat)"
-          }
-        });
-        window.botpress.on("webchat:ready", () => {
-          webchatDiv.style.opacity = '1';
-          window.botpress.open();
-        });
-      };
-      document.body.appendChild(s);
-    }, 100);
-  }, 800);
-}
 </script>
+
 </body>
 </html>
