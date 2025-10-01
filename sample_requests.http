@@ -1,0 +1,38 @@
+### Parse text
+POST http://localhost:8000/parse
+X-API-Key: DEV_KEY_123
+Content-Type: application/json
+
+{ "text": "Paid ₹5,000 rent" }
+
+### Create entry (from parsed payload)
+POST http://localhost:8000/entries
+X-API-Key: DEV_KEY_123
+Content-Type: application/json
+
+{
+  "debit_account": "Rent Expense",
+  "credit_account": "Cash",
+  "amount": 5000,
+  "narration": "Paid rent"
+}
+
+### Get entries
+GET http://localhost:8000/entries
+X-API-Key: DEV_KEY_123
+
+### P&L
+GET http://localhost:8000/reports/pnl
+X-API-Key: DEV_KEY_123
+
+### Balance sheet
+GET http://localhost:8000/reports/balance-sheet
+X-API-Key: DEV_KEY_123
+
+### Export Excel
+GET http://localhost:8000/export/excel
+X-API-Key: DEV_KEY_123
+
+### Export PDF
+GET http://localhost:8000/export/pdf
+X-API-Key: DEV_KEY_123

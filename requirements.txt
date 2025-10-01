@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+sqlmodel
+pydantic
+typing_extensions
+pandas
+openpyxl
+reportlab
+python-multipart
