@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UXXCA — Dashboard (MVP)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0a0a0a;--gold:#D4AF37;--muted:#9aa0a6;--card:#0f1720;--glass: rgba(255,255,255,0.03);--success:#16a34a}
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial; background:linear-gradient(180deg,#050506 0%, #0b0b0b 100%); color:#e6eef6; margin:0; -webkit-font-smoothing:antialiased}
+    .container{max-width:1200px;margin:28px auto;padding:20px}
+
+    /* Splash */
+    .splash{display:flex;align-items:center;justify-content:center;height:90vh;flex-direction:column}
+    .logo{font-family:'Playfair Display',serif;font-size:48px;color:var(--gold);letter-spacing:4px}
+    .tag{color:var(--muted);margin-top:6px}
+    .progress{width:320px;height:6px;background:rgba(255,255,255,0.06);border-radius:6px;margin-top:18px;overflow:hidden}
+    .bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),#ffd97a);border-radius:6px;transition:width 1.4s ease}
+
+    /* Layout */
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand .logo-sm{font-family:'Playfair Display';font-size:22px;color:var(--gold)}
+    .profile{display:flex;align-items:center;gap:12px}
+    .avatar{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#1f2937,#111827);display:flex;align-items:center;justify-content:center;font-weight:700}
+
+    /* nav */
+    nav{display:flex;gap:8px}
+    .nav-btn{background:transparent;border:0;color:var(--muted);padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600}
+    .nav-btn.active{color:#fff;background:linear-gradient(90deg,rgba(212,175,55,0.08),rgba(212,175,55,0.03));box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+
+    /* cards */
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px}
+    .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.6)}
+    .card h3{margin:0;font-size:13px;color:var(--muted)}
+    .card .val{font-size:22px;margin-top:8px;color:#fff;font-weight:700}
+
+    /* quick actions */
+    .actions{display:flex;gap:10px;margin-top:14px}
+    .btn{background:var(--gold);color:#071017;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+
+    /* layout columns */
+    .main{display:grid;grid-template-columns:1fr 380px;gap:18px;margin-top:18px}
+    .left{display:flex;flex-direction:column;gap:14px}
+    .right{display:flex;flex-direction:column;gap:14px}
+
+    /* transactions */
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px}
+    .table{width:100%;border-collapse:collapse}
+    .table th{font-size:12px;color:var(--muted);text-align:left;padding:8px 6px}
+    .table td{padding:10px 6px;border-top:1px dashed rgba(255,255,255,0.03)}
+
+    /* chat */
+    .chat{position:fixed;right:20px;bottom:20px;width:360px;background:linear-gradient(180deg,#071018, #0b1720);border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,0.6);overflow:hidden}
+    .chat header{padding:12px 14px;display:flex;align-items:center;gap:10px}
+    .chat .messages{height:260px;overflow:auto;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+    .msg{max-width:78%;padding:10px;border-radius:10px}
+    .msg.user{align-self:flex-end;background:linear-gradient(90deg,#0f1720,#0b1220);color:#fff}
+    .msg.ai{align-self:flex-start;background:rgba(255,255,255,0.03);color:var(--muted)}
+    .chat .input{display:flex;padding:10px;gap:8px;border-top:1px solid rgba(255,255,255,0.03)}
+    .chat input{flex:1;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:#fff}
+
+    /* modal */
+    .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center}
+    .modal{width:580px;background:#071018;padding:18px;border-radius:12px}
+    .field{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+    .field label{width:110px;color:var(--muted);font-size:13px}
+    .field input,.field select{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff}
+
+    /* small */
+    .muted{color:var(--muted);font-size:13px}
+    footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center}
+
+    @media(max-width:980px){.grid{grid-template-columns:repeat(1,1fr)} .main{grid-template-columns:1fr} .chat{width:92%;right:4%;left:4%}}
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Splash -->
+    <div id="splash" class="splash">
+      <div class="logo">UXXCA</div>
+      <div class="tag">Your Chartered Accountant. Redefined.</div>
+      <div class="progress"><div id="bar" class="bar"></div></div>
+    </div>
+
+    <!-- Main App -->
+    <div id="main" class="container" style="display:none">
+      <header>
+        <div class="brand">
+          <div class="logo-sm">UXXCA</div>
+          <div class="muted">Automated accounting & AI advisor</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <nav>
+            <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+            <button class="nav-btn" data-view="transactions">Transactions</button>
+            <button class="nav-btn" data-view="reports">Reports</button>
+          </nav>
+          <div class="profile">
+            <div style="text-align:right"><div style="font-weight:700">Nandini</div><div class="muted" style="font-size:12px">Nandini's Bakery</div></div>
+            <div class="avatar">ND</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- quick panels -->
+      <section class="grid">
+        <div class="card"><h3>Total Revenue (month)</h3><div id="rev" class="val">₹0</div></div>
+        <div class="card"><h3>Expenses (month)</h3><div id="exp" class="val">₹0</div></div>
+        <div class="card"><h3>Net Profit / Loss</h3><div id="net" class="val">₹0</div></div>
+      </section>
+
+      <div class="actions"><button class="btn" id="addTxBtn">+ Add Transaction</button><button class="btn secondary" id="importBtn">Import Invoice (simulate)</button><button class="btn secondary" id="backupBtn">Backup / Sync</button></div>
+
+      <div class="main">
+        <div class="left">
+          <div id="dashboardView">
+            <div class="panel">
+              <h3>Recent transactions</h3>
+              <table class="table" id="txTable">
+                <thead><tr><th>Date</th><th>Account</th><th>Type</th><th>Category</th><th>Amount</th></tr></thead>
+                <tbody id="txBody"></tbody>
+              </table>
+            </div>
+
+            <div class="panel" style="margin-top:12px">
+              <h3>Insights</h3>
+              <div id="insights" class="muted">AI will suggest insights here (sample: Reduce spending on Vendor A by 15%).</div>
+            </div>
+          </div>
+
+          <div id="transactionsView" style="display:none">
+            <div class="panel">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div><h3>All Transactions</h3><div class="muted">Search & filters</div></div>
+                <div style="display:flex;gap:8px"><input id="search" placeholder="Search description or category" style="padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:#fff"><button class="btn" id="exportCsv">Export CSV</button><button class="btn" id="exportXls">Export Excel</button></div>
+              </div>
+              <table class="table" id="txTableAll"><thead><tr><th>Date</th><th>Account</th><th>Type</th><th>Category</th><th>Amount</th></tr></thead><tbody id="txAllBody"></tbody></table>
+            </div>
+          </div>
+
+          <div id="reportsView" style="display:none">
+            <div class="panel">
+              <h3>Reports</h3>
+              <div style="display:flex;gap:8px;margin-top:10px">
+                <select id="reportType" style="padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:#fff">
+                  <option value="pnl">Profit & Loss</option>
+                  <option value="bs">Balance Sheet (simplified)</option>
+                  <option value="cf">Cash Flow (basic)</option>
+                </select>
+                <input type="date" id="fromDate" style="padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:#fff">
+                <input type="date" id="toDate" style="padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:#fff">
+                <button class="btn" id="genReport">Generate</button>
+                <button class="btn secondary" id="exportPdf">Export as PDF</button>
+              </div>
+              <div id="reportArea" style="margin-top:12px"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="right">
+          <div class="panel">
+            <h3>Upcoming</h3>
+            <ul style="padding-left:16px"><li class="muted">GST filing in 5 days</li><li class="muted">2 overdue payments</li></ul>
+          </div>
+
+          <div class="panel">
+            <h3>Quick links</h3>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+              <button class="btn secondary">Send to Accountant</button>
+              <button class="btn secondary">Settings</button>
+              <button class="btn" id="viewLedger">View Ledger (trial)</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Coach (AI)</h3>
+            <div class="muted">Suggestions: Cut vendor X, increase price of product Y, forecast next month.</div>
+          </div>
+        </aside>
+      </div>
+
+      <footer>UXXCA • MVP demo · Design by Nandini</footer>
+    </div>
+
+    <!-- Chat widget -->
+    <div class="chat" id="chat" style="display:none">
+      <header><div style="font-weight:700">UXXCA AI Advisor</div><div class="muted" style="margin-left:auto">Beta</div></header>
+      <div class="messages" id="messages"></div>
+      <div class="input"><input id="chatInput" placeholder="Ask: e.g. 'Show sales for July'" /><button class="btn" id="chatSend">Ask</button></div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modalRoot"></div>
+  </div>
+
+  <!-- Libraries for export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <script>
+    // --- Splash animation ---
+    const splash = document.getElementById('splash');
+    const main = document.getElementById('main');
+    const bar = document.getElementById('bar');
+    let pct = 0;
+    const tick = setInterval(()=>{pct+=14; bar.style.width = pct+'%'; if(pct>=100){clearInterval(tick); setTimeout(()=>{splash.style.display='none'; main.style.display='block'; document.getElementById('chat').style.display='block';},700)}},220);
+
+    // --- App state ---
+    const state = { transactions:[], nextId:1 }
+
+    // sample data
+    const sample = [
+      {date:'2025-09-01',account:'Cash',type:'Income',category:'Sales',desc:'Cake sales',amount:8500},
+      {date:'2025-09-03',account:'Bank',type:'Expense',category:'Rent',desc:'Shop rent',amount:5000},
+      {date:'2025-09-05',account:'Cash',type:'Expense',category:'Supplies',desc:'Flour & sugar',amount:2300},
+      {date:'2025-09-12',account:'Bank',type:'Income',category:'Sales',desc:'Bulk order',amount:15000},
+      {date:'2025-09-21',account:'Cash',type:'Expense',category:'Wages',desc:'Staff salary',amount:6000}
+    ]
+    sample.forEach(s=>addTransaction(s,true))
+
+    // DOM refs
+    const txBody = document.getElementById('txBody');
+    const txAllBody = document.getElementById('txAllBody');
+    const rev = document.getElementById('rev');
+    const exp = document.getElementById('exp');
+    const net = document.getElementById('net');
+
+    function addTransaction(tx,skipRender){
+      tx.id = state.nextId++;
+      state.transactions.unshift(tx);
+      if(!skipRender) renderAll();
+      renderSummary();
+    }
+
+    function renderSummary(){
+      const month = (new Date()).getMonth();
+      let revenue=0, expenses=0;
+      state.transactions.forEach(t=>{
+        const d = new Date(t.date);
+        if(d.getMonth()===month){ if(t.type==='Income') revenue+=t.amount; else expenses+=t.amount }
+      })
+      rev.textContent = '₹'+revenue.toLocaleString();
+      exp.textContent = '₹'+expenses.toLocaleString();
+      const netv = revenue - expenses; net.textContent = (netv>=0? '₹'+netv.toLocaleString() : '-₹'+Math.abs(netv).toLocaleString())
+    }
+
+    function renderAll(){
+      txBody.innerHTML=''; txAllBody.innerHTML='';
+      state.transactions.forEach(t=>{
+        const tr = document.createElement('tr'); tr.innerHTML=`<td>${t.date}</td><td>${t.account}</td><td>${t.type}</td><td>${t.category}</td><td>₹${t.amount.toLocaleString()}</td>`;
+        txBody.appendChild(tr);
+
+        const tr2 = tr.cloneNode(true);
+        txAllBody.appendChild(tr2);
+      })
+    }
+
+    renderAll(); renderSummary();
+
+    // --- Navigation ---
+    document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>{
+      document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active');
+      const view = b.dataset.view; document.getElementById('dashboardView').style.display = view==='dashboard'? 'block':'none'; document.getElementById('transactionsView').style.display = view==='transactions'? 'block':'none'; document.getElementById('reportsView').style.display = view==='reports'? 'block':'none';
+    }))
+
+    // --- Add Transaction Modal ---
+    document.getElementById('addTxBtn').addEventListener('click',()=>{
+      openModal(`<div style=\"display:flex;justify-content:space-between;align-items:center\"><h3>Add Transaction</h3><button id=\"closeModal\" class=\"btn secondary\">Close</button></div>
+        <div style=\"margin-top:12px\">\n          <div class=\"field\"><label>Date</label><input id=\"txDate\" type=\"date\" value=\"2025-09-30\"></div>\n          <div class=\"field\"><label>Account</label><select id=\"txAccount\"><option>Cash</option><option>Bank</option></select></div>\n          <div class=\"field\"><label>Type</label><select id=\"txType\"><option>Income</option><option>Expense</option></select></div>\n          <div class=\"field\"><label>Category</label><input id=\"txCat\" placeholder=\"e.g. Sales, Rent, Supplies\"></div>\n          <div class=\"field\"><label>Amount (₹)</label><input id=\"txAmt\" type=\"number\"></div>\n          <div class=\"field\"><label>Description</label><input id=\"txDesc\" placeholder=\"Short description\"></div>\n          <div style=\"display:flex;gap:8px;margin-top:10px\"><button class=\"btn\" id=\"saveTx\">Save</button><button class=\"btn secondary\" id=\"saveTemplate\">Save as template</button></div>\n        </div>`)
+      document.getElementById('closeModal').addEventListener('click',closeModal)
+      document.getElementById('saveTx').addEventListener('click',()=>{
+        const tx = {date:document.getElementById('txDate').value || new Date().toISOString().slice(0,10), account:document.getElementById('txAccount').value, type:document.getElementById('txType').value, category:document.getElementById('txCat').value || 'Misc', desc:document.getElementById('txDesc').value||'', amount: Number(document.getElementById('txAmt').value)||0}
+        addTransaction(tx); closeModal();
+      })
+    })
+
+    function openModal(html){
+      const root = document.getElementById('modalRoot'); root.innerHTML = `<div class=\"modal-back\"><div class=\"modal\">${html}</div></div>`
+    }
+    function closeModal(){ document.getElementById('modalRoot').innerHTML = '' }
+
+    // --- Import simulate (OCR) ---
+    document.getElementById('importBtn').addEventListener('click',()=>{
+      // simulate OCR extracted entry
+      const simulated = {date: new Date().toISOString().slice(0,10), account:'Bank', type:'Expense', category:'Supplies', desc:'Scanned invoice (OCR)', amount: Math.floor(Math.random()*5000)+500}
+      addTransaction(simulated);
+      alert('Imported invoice and added transaction (simulated)')
+    })
+
+    // --- Search ---
+    document.getElementById('search').addEventListener('input',(e)=>{
+      const q = e.target.value.toLowerCase(); txAllBody.innerHTML=''; state.transactions.filter(t=> (t.desc||'').toLowerCase().includes(q) || (t.category||'').toLowerCase().includes(q)).forEach(t=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${t.date}</td><td>${t.account}</td><td>${t.type}</td><td>${t.category}</td><td>₹${t.amount.toLocaleString()}</td>`; txAllBody.appendChild(tr) })
+    })
+
+    // --- Exports ---
+    document.getElementById('exportCsv').addEventListener('click',()=>{
+      const rows = [['Date','Account','Type','Category','Amount']]; state.transactions.forEach(t=>rows.push([t.date,t.account,t.type,t.category,t.amount])); const csv = rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n'); const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='uxxca_transactions.csv'; a.click(); URL.revokeObjectURL(url);
+    })
+
+    document.getElementById('exportXls').addEventListener('click',()=>{
+      const ws = XLSX.utils.json_to_sheet(state.transactions.map(t=>({Date:t.date,Account:t.account,Type:t.type,Category:t.category,Amount:t.amount})))
+      const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Transactions'); XLSX.writeFile(wb,'uxxca_transactions.xlsx')
+    })
+
+    // --- Reports generation ---
+    document.getElementById('genReport').addEventListener('click',()=>{
+      const type = document.getElementById('reportType').value; const from = document.getElementById('fromDate').value; const to = document.getElementById('toDate').value; generateReport(type,from,to);
+    })
+
+    document.getElementById('exportPdf').addEventListener('click',()=>{
+      const el = document.getElementById('reportArea'); if(!el.innerHTML.trim()){ alert('Generate a report first'); return }
+      html2pdf().from(el).set({margin:10,filename:'uxxca_report.pdf',html2canvas:{scale:2}}).save();
+    })
+
+    function generateReport(type,from,to){
+      const fromD = from? new Date(from): new Date('2000-01-01'); const toD = to? new Date(to): new Date('2100-01-01'); const filtered = state.transactions.filter(t=>{const d=new Date(t.date); return d>=fromD && d<=toD})
+      const area = document.getElementById('reportArea'); area.innerHTML = '';
+      if(type==='pnl'){
+        const income = filtered.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0)
+        const expenses = filtered.filter(t=>t.type==='Expense').reduce((s,t)=>s+t.amount,0)
+        area.innerHTML = `<h4>Profit & Loss</h4><div class=\"muted\">From ${from||'start'} to ${to||'end'}</div><table style=\"width:100%;margin-top:10px\"><tr><td>Income</td><td style=\"text-align:right\">₹${income.toLocaleString()}</td></tr><tr><td>Expenses</td><td style=\"text-align:right\">- ₹${expenses.toLocaleString()}</td></tr><tr style=\"border-top:1px dashed rgba(255,255,255,0.03);font-weight:700\"><td>Net</td><td style=\"text-align:right\">₹${(income-expenses).toLocaleString()}</td></tr></table>`
+      } else if(type==='bs'){
+        // simple: assets = cash/bank; liabilities = placeholder
+        const assets = filtered.filter(t=>t.account==='Cash' || t.account==='Bank').reduce((s,t)=> s + (t.type==='Income'? t.amount: -t.amount),0)
+        const liabilities = 0; area.innerHTML = `<h4>Balance Sheet (Simplified)</h4><div class=\"muted\">As of ${to||new Date().toISOString().slice(0,10)}</div><table style=\"width:100%;margin-top:10px\"><tr><td>Assets</td><td style=\"text-align:right\">₹${assets.toLocaleString()}</td></tr><tr><td>Liabilities</td><td style=\"text-align:right\">₹${liabilities.toLocaleString()}</td></tr><tr style=\"border-top:1px dashed rgba(255,255,255,0.03);font-weight:700\"><td>Equity</td><td style=\"text-align:right\">₹${(assets-liabilities).toLocaleString()}</td></tr></table>`
+      } else if(type==='cf'){
+        const inflow = filtered.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0)
+        const outflow = filtered.filter(t=>t.type==='Expense').reduce((s,t)=>s+t.amount,0)
+        area.innerHTML = `<h4>Cash Flow (Basic)</h4><div class=\"muted\">From ${from||'start'} to ${to||'end'}</div><table style=\"width:100%;margin-top:10px\"><tr><td>Cash In</td><td style=\"text-align:right\">₹${inflow.toLocaleString()}</td></tr><tr><td>Cash Out</td><td style=\"text-align:right\">₹${outflow.toLocaleString()}</td></tr><tr style=\"border-top:1px dashed rgba(255,255,255,0.03);font-weight:700\"><td>Net Cash</td><td style=\"text-align:right\">₹${(inflow-outflow).toLocaleString()}</td></tr></table>`
+      }
+    }
+
+    // --- Chatbot ---
+    const messages = document.getElementById('messages'); function pushMsg(text,who='ai'){const d=document.createElement('div');d.className='msg '+(who==='user'?'user':'ai');d.textContent=text;messages.appendChild(d);messages.scrollTop = messages.scrollHeight}
+    document.getElementById('chatSend').addEventListener('click',handleChat)
+    document.getElementById('chatInput').addEventListener('keydown',(e)=>{if(e.key==='Enter') handleChat()})
+
+    function handleChat(){const q=document.getElementById('chatInput').value.trim(); if(!q) return; pushMsg(q,'user'); document.getElementById('chatInput').value=''; setTimeout(()=>{respondTo(q)},500)}
+
+    function respondTo(q){
+      const text = q.toLowerCase();
+      if(text.includes('sales') || text.includes('revenue')){
+        // find month if present
+        const m = parseMonth(text);
+        let filtered = state.transactions.filter(t=>t.type==='Income'); if(m){filtered = filtered.filter(t=> new Date(t.date).getMonth()+1===m)}
+        const total = filtered.reduce((s,t)=>s+t.amount,0);
+        pushMsg(`Total sales ${m? 'for month '+m : ''}: ₹${total.toLocaleString()}`)
+      } else if(text.includes('profit')){
+        const from=null; const to=null; const income = state.transactions.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0); const expenses = state.transactions.filter(t=>t.type==='Expense').reduce((s,t)=>s+t.amount,0); pushMsg(`Net profit (all time): ₹${(income-expenses).toLocaleString()}`)
+      } else if(text.includes('export') && text.includes('pdf')){
+        // try to export current report
+        const el = document.getElementById('reportArea'); if(el && el.innerHTML.trim()){ html2pdf().from(el).save(); pushMsg('Exporting current report to PDF...') } else pushMsg('No report content to export. Generate a report first.')
+      } else if(text.includes('show') && text.includes('ledger')){
+        // simple ledger view
+        const ledger = {} ; state.transactions.forEach(t=>{ ledger[t.account] = ledger[t.account]||0; ledger[t.account] += (t.type==='Income'? t.amount: -t.amount) }); let out = 'Ledger balances:\n'; for(const a in ledger) out += `${a}: ₹${ledger[a].toLocaleString()}\n`; pushMsg(out)
+      } else {
+        pushMsg('Sorry — I can do basic queries: sales, profit, export pdf, show ledger, or try "Show sales for September"')
+      }
+    }
+
+    function parseMonth(text){ // find month name or number
+      const months = {january:1,february:2,march:3,april:4,may:5,june:6,july:7,august:8,september:9,october:10,november:11,december:12}
+      for(const m in months) if(text.includes(m)) return months[m]; const num = text.match(/\b(\d{1,2})\b/); if(num) return Number(num[1]); return null
+    }
+
+    // --- Ledger quick ---
+    document.getElementById('viewLedger').addEventListener('click',()=>{
+      let html = '<h3>Ledger (balances)</h3><div class="muted">Quick summary</div><table style="width:100%;margin-top:10px">'; const ledger = {}; state.transactions.forEach(t=>{ledger[t.account]= ledger[t.account]||0; ledger[t.account]+= (t.type==='Income'? t.amount: -t.amount)}); for(const a in ledger){ html += `<tr><td>${a}</td><td style="text-align:right">₹${ledger[a].toLocaleString()}</td></tr>` } html+='</table>'
+      openModal(html); document.getElementById('closeModal')?.addEventListener('click',closeModal)
+    })
+
+    // --- Backup (simulate) ---
+    document.getElementById('backupBtn').addEventListener('click',()=>{ alert('Data backed up to cloud (simulated).') })
+
+    // initial chat greeting
+    setTimeout(()=>{pushMsg('Hi Nandini — I am UXXCA. Ask me financial questions or type "Show sales for September" to try.')},1200)
+  </script>
+</body>
+</html>

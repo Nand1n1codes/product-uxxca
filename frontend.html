@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>UXXCA – Your Automated Accountant</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400&display=swap" rel="stylesheet">
+
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0A0A0A; /* deep charcoal */
+    color: #FFFFFF;
+    padding: 40px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    color: #D4AF37; /* gold */
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg,#D4AF37 0%,#B5942B 60%,#D4AF37 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s linear infinite;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    color: #FFFFFF;
+    font-size: 1.8rem;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    text-align: left;
+    border-bottom: 1px solid #D4AF37;
+    padding-bottom: 5px;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  input[type="text"] {
+    width: 60%;
+    max-width: 400px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #D4AF37;
+    background: #0A0A0A;
+    color: #FFFFFF;
+    font-size: 1rem;
+    margin-right: 10px;
+    outline: none;
+  }
+
+  input[type="text"]::placeholder {
+    color: #AAAAAA;
+  }
+
+  .btn {
+    background: #D4AF37;
+    color: #0A0A0A;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn:hover {
+    background: #B5942B;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  th, td {
+    border: 1px solid rgba(212,175,55,0.3);
+    padding: 10px;
+    text-align: left;
+    font-size: 0.95rem;
+  }
+
+  th {
+    background: #D4AF37;
+    color: #0A0A0A;
+  }
+
+  #output {
+    background: #111111;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 20px;
+    font-family: 'Inter', sans-serif;
+    color: #FFFFFF;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+  }
+
+  .actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>UXXCA</h1>
+<h2>Your Automated Accountant</h2>
+
+<div>
+  <input type="text" id="txnInput" placeholder="Type transaction: 'Paid 5000 rent'">
+  <button class="btn" onclick="addTransaction()">Add Entry</button>
+</div>
+
+<h2>Transactions</h2>
+<table id="entriesTable">
+  <thead>
+    <tr>
+      <th>Date</th><th>Debit</th><th>Credit</th><th>Amount</th><th>Narration</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div class="actions">
+  <button class="btn" onclick="getPnL()">📊 Profit & Loss</button>
+  <button class="btn" onclick="getBalanceSheet()">📑 Balance Sheet</button>
+  <button class="btn" onclick="downloadPDF()">⬇️ Export PDF</button>
+  <button class="btn" onclick="downloadExcel()">⬇️ Export Excel</button>
+</div>
+
+<pre id="output"></pre>
+
+<script>
+const API_KEY = "DEV_KEY_123";
+const BASE_URL = "http://localhost:8000";
+
+// Add transaction
+async function addTransaction() {
+  const text = document.getElementById("txnInput").value;
+  if (!text) return alert("Please enter a transaction.");
+
+  let res = await fetch(BASE_URL + "/parse", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-API-Key": API_KEY },
+    body: JSON.stringify({ text })
+  });
+  let parsed = await res.json();
+  if (!parsed.amount) return alert("Could not parse transaction.");
+
+  res = await fetch(BASE_URL + "/entries", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-API-Key": API_KEY },
+    body: JSON.stringify({
+      debit_account: parsed.debit_account,
+      credit_account: parsed.credit_account,
+      amount: parsed.amount,
+      narration: parsed.narration
+    })
+  });
+  await res.json();
+  document.getElementById("txnInput").value = "";
+  loadEntries();
+}
+
+// Load entries
+async function loadEntries() {
+  const res = await fetch(BASE_URL + "/entries", { headers: { "X-API-Key": API_KEY } });
+  const entries = await res.json();
+  const tbody = document.querySelector("#entriesTable tbody");
+  tbody.innerHTML = "";
+  entries.forEach(e => {
+    tbody.innerHTML += `<tr>
+      <td>${e.entry_date}</td>
+      <td>${e.debit_account}</td>
+      <td>${e.credit_account}</td>
+      <td>₹${e.amount}</td>
+      <td>${e.narration || ""}</td>
+    </tr>`;
+  });
+}
+
+// PnL & Balance Sheet
+async function getPnL() {
+  const res = await fetch(BASE_URL + "/reports/pnl", { headers: { "X-API-Key": API_KEY } });
+  const data = await res.text();
+  document.getElementById("output").textContent = data;
+}
+
+async function getBalanceSheet() {
+  const res = await fetch(BASE_URL + "/reports/balance-sheet", { headers: { "X-API-Key": API_KEY } });
+  const data = await res.text();
+  document.getElementById("output").textContent = data;
+}
+
+// Export PDF/Excel
+async function downloadPDF() {
+  const res = await fetch(BASE_URL + "/export/pdf", { headers: { "X-API-Key": API_KEY } });
+  if (!res.ok) return alert("Failed to download PDF");
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "uxxca_entries.pdf"; document.body.appendChild(a); a.click(); a.remove();
+}
+
+async function downloadExcel() {
+  const res = await fetch(BASE_URL + "/export/excel", { headers: { "X-API-Key": API_KEY } });
+  if (!res.ok) return alert("Failed to download Excel");
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "uxxca_entries.xlsx"; document.body.appendChild(a); a.click(); a.remove();
+}
+
+// Load on open
+loadEntries();
+</script>
+
+</body>
+</html>

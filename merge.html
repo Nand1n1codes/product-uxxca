@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UXXCA Onboarding</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400&display=swap" rel="stylesheet">
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:#0A0A0A;
+    color:#fff;
+    font-family:'Inter',sans-serif;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+  }
+
+  /* Landing */
+  #landing{width:100%;height:100%;position:absolute;top:0;left:0;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:opacity 1s;}
+  .logo{font-family:'Playfair Display', serif; font-size:5rem; color:#D4AF37; background:linear-gradient(90deg,#D4AF37 0%,#D4AF37 40%,#B5942B 60%,#D4AF37 100%); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation:shimmer 2.5s linear infinite;}
+  .tagline{font-size:1.2rem;color:#EEEEEE;margin-top:10px;text-align:center;}
+  .headline{font-size:2rem;line-height:1.5;text-align:center;margin-top:30px;}
+  .subline{font-size:1rem;color:#AAAAAA;text-align:center;margin-top:10px;max-width:500px;}
+  .progress-container{width:80%;max-width:500px;margin-top:30px;text-align:center;}
+  .progress-bar{height:4px;background-color:#D4AF37;width:0%;border-radius:2px;transition:width 0.1s linear;}
+  .progress-text{font-size:0.9rem;color:#FFFFFF;min-height:24px;margin-top:10px;}
+  .microtext{font-size:0.7rem;color:#FFFFFF;margin-top:20px;text-align:center;max-width:400px;}
+  @keyframes shimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
+
+  /* PIN */
+  .pin-wrap { position: absolute; z-index:40; width:100%; height:100%; top:0; left:0; display:flex; justify-content:center; align-items:center; padding:20px; opacity:0; }
+  .pin-card { background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.06); width:420px; max-width:92%; padding:28px; border-radius:14px; box-shadow: 0 14px 40px rgba(0,0,0,0.6); text-align:center; color:#EEF2FF; backdrop-filter: blur(6px);}
+  .pin-card h2 { color:#D4AF37; font-size:1.4rem; margin-bottom:8px; font-weight:700; }
+  .pin-sub { color:#d6dff6; margin-bottom:14px; font-size:0.95rem; }
+  .pin-inputs { display:flex; justify-content:space-between; gap:10px; margin:14px 0 8px; }
+  .pin-inputs input { width:64px; height:64px; font-size:1.6rem; text-align:center; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:#fff; outline:none; }
+  .btn { background:#dba605; color:#fff; border:none; padding:10px 16px; border-radius:10px; font-weight:700; cursor:pointer; }
+  .btn.ghost { background:transparent; border:1px solid rgba(255,255,255,0.06); color:#dbe8ff; }
+  .error { color:#ffb3b3; margin-top:8px; min-height:18px; }
+
+  /* Dashboard */
+  #dashboard{
+    display:none;
+    width:100%;
+    height:100%;
+    background:#0A0A0A;
+    padding:20px;
+    box-sizing:border-box;
+  }
+  .dash-container{
+    display:flex;
+    height:100%;
+    gap:20px;
+  }
+  .dash-left{
+    flex:1;
+    background:#111;
+    border-radius:12px;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+  }
+  .dash-left h2{
+    color:#D4AF37;
+    margin-bottom:12px;
+  }
+  form{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+  }
+  form input, form select, form button{
+    padding:10px;
+    border-radius:8px;
+    border:none;
+  }
+  form input, form select{
+    flex:1;
+  }
+  form button{
+    background:#D4AF37;
+    color:#000;
+    font-weight:700;
+    cursor:pointer;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+  }
+  th, td{
+    padding:10px;
+    border-bottom:1px solid #333;
+    text-align:left;
+  }
+  th{ color:#D4AF37; }
+
+  .dash-right{
+    flex:1;
+    border-radius:12px;
+    overflow:hidden;
+  }
+  #botpressFrame{
+    width:100%;
+    height:100%;
+    border:none;
+    background:#111;
+  }
+</style>
+</head>
+<body>
+
+<!-- Landing -->
+<div id="landing">
+  <div class="logo">UXXCA</div>
+  <div class="tagline">Your Chartered Accountant. Redefined.</div>
+  <div class="headline">
+    Accounting. Automated.<br>
+    Insights. Personalized.<br>
+    Exclusivity. Guaranteed.
+  </div>
+  <div class="subline">
+    Private access to world-class financial intelligence.<br>
+    Available to a limited number of members each month.
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progress-bar"></div>
+    <div class="progress-text" id="progress-text"></div>
+  </div>
+  <div class="microtext">
+    By continuing, you confirm you’ve been invited to access UXXCA’s exclusive beta.
+  </div>
+</div>
+
+<!-- PIN Access -->
+<div class="pin-wrap" id="pinWrap">
+  <div class="pin-card">
+    <h2>🔐 Private Access</h2>
+    <div class="pin-sub">Enter your 4-digit access PIN to continue</div>
+    <div class="pin-inputs">
+      <input inputmode="numeric" maxlength="1" class="pin-digit" id="d1" />
+      <input inputmode="numeric" maxlength="1" class="pin-digit" id="d2" />
+      <input inputmode="numeric" maxlength="1" class="pin-digit" id="d3" />
+      <input inputmode="numeric" maxlength="1" class="pin-digit" id="d4" />
+    </div>
+    <div class="pin-actions">
+      <button class="btn" id="unlockBtn">Unlock</button>
+      <button class="btn ghost" id="helpBtn">Need help?</button>
+    </div>
+    <div class="error" id="pinError"></div>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+  <div class="dash-container">
+    <!-- Left: Transactions -->
+    <div class="dash-left">
+      <h2>💰 Transactions</h2>
+      <form id="txForm">
+        <input type="text" id="desc" placeholder="Description" required />
+        <input type="number" id="amount" placeholder="Amount" required />
+        <select id="type">
+          <option value="Income">Income</option>
+          <option value="Expense">Expense</option>
+        </select>
+        <button type="submit">Add</button>
+      </form>
+      <table id="txTable">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Right: Botpress -->
+    <div class="dash-right">
+      <iframe id="botpressFrame" 
+        src="https://cdn.botpress.cloud/webchat/v3.2/shareable.html?configUrl=https://files.bpcontent.cloud/2025/09/03/17/20250903170210-WM3PUBT1.json">
+      </iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.addEventListener("message", function(event) {
+  if (!event.data) return;
+
+  // Look for Botpress messages
+  if (event.data.type === "message" && event.data.payload) {
+    const msg = event.data.payload.text;
+
+    // Example: parse bot response like "Add Expense: Lunch 250"
+    if (msg.startsWith("Add ")) {
+      const parts = msg.split(":");
+      if (parts.length === 2) {
+        const [typeText, rest] = parts;
+        const [desc, amt] = rest.trim().split(" ");
+        addTransaction(desc, amt, typeText.includes("Income") ? "Income" : "Expense");
+      }
+    }
+  }
+});
+
+// Helper to add row into table
+function addTransaction(desc, amt, type) {
+  const row = document.createElement("tr");
+  row.innerHTML = `<td>${desc}</td><td>${amt}</td><td>${type}</td>`;
+  document.querySelector("#txTable tbody").appendChild(row);
+}
+
+const progressBar=document.getElementById('progress-bar');
+const progressText=document.getElementById('progress-text');
+const landing=document.getElementById('landing');
+const pinWrap=document.getElementById('pinWrap');
+const dashboard=document.getElementById('dashboard');
+
+const steps=["Preparing your private dashboard...","Reserving your spot...","Analysing your business potential..."];
+let progress=0; let stepIndex=0;
+const interval=setInterval(()=>{
+  progress += 1; if(progress>100) progress=100;
+  progressBar.style.width=progress+"%";
+  const step=Math.floor(progress/(100/steps.length));
+  if(stepIndex!==step && step<steps.length){ progressText.textContent=steps[step]; stepIndex=step; }
+  if(progress===100){
+    clearInterval(interval);
+    setTimeout(()=>{
+      landing.style.opacity=0;
+      setTimeout(()=>{
+        landing.style.display='none';
+        pinWrap.style.opacity=1;
+      },1000);
+    },500);
+  }
+},50);
+
+const validPins={"4729":{name:"AcmeCorp"},"8345":{name:"Globex"},"2231":{name:"BetaLabs"}};
+const digits=Array.from(document.querySelectorAll('.pin-digit'));
+const unlockBtn=document.getElementById('unlockBtn');
+const helpBtn=document.getElementById('helpBtn');
+const pinError=document.getElementById('pinError');
+
+digits.forEach((el,idx)=>{
+  el.addEventListener('input',()=>{
+    el.value=el.value.replace(/[^0-9]/g,'').slice(0,1);
+    if(el.value && idx<digits.length-1) digits[idx+1].focus();
+  });
+});
+
+unlockBtn.addEventListener('click',attemptUnlock);
+helpBtn.addEventListener('click',()=>{ pinError.textContent="Contact uxxca.business@gmail.com for access assistance."; });
+
+function getEnteredPin(){ return digits.map(d=>d.value||'').join(''); }
+function attemptUnlock(){
+  const p=getEnteredPin();
+  if(p.length!==4){ pinError.textContent="Enter all 4 digits"; return; }
+  if(validPins[p]){
+    pinWrap.style.display='none';
+    dashboard.style.display='block';
+  }else{ pinError.textContent="Invalid PIN"; }
+}
+
+/* Transactions Logic */
+const txForm=document.getElementById('txForm');
+const txTable=document.querySelector('#txTable tbody');
+
+txForm.addEventListener('submit',e=>{
+  e.preventDefault();
+  const desc=document.getElementById('desc').value;
+  const amt=document.getElementById('amount').value;
+  const type=document.getElementById('type').value;
+  const row=document.createElement('tr');
+  row.innerHTML=`<td>${desc}</td><td>${amt}</td><td>${type}</td>`;
+  txTable.appendChild(row);
+  txForm.reset();
+});
+
+
+</script>
+
+</body>
+</html>
